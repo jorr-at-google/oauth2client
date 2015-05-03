@@ -1816,7 +1816,7 @@ class OAuth2WebServerFlow(Flow):
     self.params.update(kwargs)
 
   @util.positional(1)
-  def step1_get_authorize_url(self, redirect_uri=None):
+  def step1_get_authorize_url(self, redirect_uri=None, state=None):
     """Returns a URI to redirect to the provider.
 
     Args:
@@ -1824,6 +1824,8 @@ class OAuth2WebServerFlow(Flow):
         a non-web-based application, or a URI that handles the callback from
         the authorization server. This parameter is deprecated, please move to
         passing the redirect_uri in via the constructor.
+      state: string, Opaque state string which is passed through the OAuth2
+        flow and returned to the client as a query parameter in the callback.
 
     Returns:
       A URI as a string to redirect the user to begin the authorization flow.
@@ -1843,6 +1845,9 @@ class OAuth2WebServerFlow(Flow):
         'redirect_uri': self.redirect_uri,
         'scope': self.scope,
     }
+    if state is not None:
+      query_params['state'] = state
+
     if self.login_hint is not None:
       query_params['login_hint'] = self.login_hint
     query_params.update(self.params)
